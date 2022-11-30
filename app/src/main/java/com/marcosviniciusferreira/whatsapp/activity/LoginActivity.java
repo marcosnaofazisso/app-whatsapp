@@ -23,7 +23,7 @@ public class LoginActivity extends AppCompatActivity {
     private TextInputEditText campoSenha;
     private Button buttonLogar;
     private TextView buttonCadastro;
-    FirebaseAuth auth;
+    FirebaseAuth auth = FirebaseConfig.getFirebaseAuth();
 
 
     @Override
@@ -56,7 +56,6 @@ public class LoginActivity extends AppCompatActivity {
                 if (textEmail.isEmpty() || textSenha.isEmpty()) {
                     Toast.makeText(getApplicationContext(), "Preencha todos os campos!", Toast.LENGTH_SHORT).show();
                 } else {
-                    auth = FirebaseConfig.getFirebaseAuth();
                     auth.signInWithEmailAndPassword(textEmail, textSenha).addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
@@ -73,6 +72,10 @@ public class LoginActivity extends AppCompatActivity {
 
             }
         });
+
+        if (auth.getCurrentUser() != null) {
+            goToMain();
+        }
 
     }
 
