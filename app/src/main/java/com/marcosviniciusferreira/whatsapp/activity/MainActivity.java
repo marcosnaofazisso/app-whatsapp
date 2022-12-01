@@ -1,5 +1,6 @@
 package com.marcosviniciusferreira.whatsapp.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.viewpager.widget.ViewPager;
@@ -24,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
 
     private FirebaseAuth auth;
     private SmartTabLayout smartTabLayout;
-    ViewPager viewPager;
+    private ViewPager viewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +68,9 @@ public class MainActivity extends AppCompatActivity {
             deslogarUsuario();
             finish();
         }
+        if (item.getItemId() == R.id.menuConfiguracoes) {
+            abrirConfiguracoes();
+        }
         return super.onOptionsItemSelected(item);
     }
 
@@ -77,5 +81,10 @@ public class MainActivity extends AppCompatActivity {
             Log.i("EXCEPTION", "ERRO: " + e);
         }
 
+    }
+
+    public void abrirConfiguracoes() {
+        Intent intent = new Intent(MainActivity.this, ConfiguracoesActivity.class);
+        startActivity(intent);
     }
 }
