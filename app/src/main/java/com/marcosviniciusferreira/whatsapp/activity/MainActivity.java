@@ -1,8 +1,11 @@
 package com.marcosviniciusferreira.whatsapp.activity;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+
+import androidx.viewpager.widget.ViewPager;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -11,10 +14,17 @@ import android.view.MenuItem;
 import com.google.firebase.auth.FirebaseAuth;
 import com.marcosviniciusferreira.whatsapp.R;
 import com.marcosviniciusferreira.whatsapp.config.FirebaseConfig;
+import com.marcosviniciusferreira.whatsapp.fragment.ContatosFragment;
+import com.marcosviniciusferreira.whatsapp.fragment.ConversasFragment;
+import com.ogaclejapan.smarttablayout.SmartTabLayout;
+import com.ogaclejapan.smarttablayout.utils.v4.FragmentPagerItemAdapter;
+import com.ogaclejapan.smarttablayout.utils.v4.FragmentPagerItems;
 
 public class MainActivity extends AppCompatActivity {
 
     private FirebaseAuth auth;
+    private SmartTabLayout smartTabLayout;
+    ViewPager viewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,6 +37,19 @@ public class MainActivity extends AppCompatActivity {
         toolbar.setTitle("WhatsApp");
         toolbar.setTitleTextColor(this.getResources().getColor(android.R.color.white));
         setSupportActionBar(toolbar);
+
+        smartTabLayout = findViewById(R.id.viewPagerTab);
+        viewPager = findViewById(R.id.viewPager);
+
+        FragmentPagerItemAdapter adapter = new FragmentPagerItemAdapter(
+                getSupportFragmentManager(),
+                FragmentPagerItems.with(this)
+                        .add("Conversas", ConversasFragment.class)
+                        .add("Contatos", ContatosFragment.class)
+                        .create());
+
+        viewPager.setAdapter(adapter);
+        smartTabLayout.setViewPager(viewPager);
 
     }
 
