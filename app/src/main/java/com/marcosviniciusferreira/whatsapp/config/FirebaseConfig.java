@@ -18,7 +18,7 @@ public class FirebaseConfig {
 
     public static DatabaseReference getFirebaseDatabase() {
         if (database == null) {
-            database = FirebaseDatabase.getInstance().getReference();
+            database = FirebaseDatabase.getInstance("https://whatsapp-6384c-default-rtdb.firebaseio.com").getReference();
         }
         return database;
     }

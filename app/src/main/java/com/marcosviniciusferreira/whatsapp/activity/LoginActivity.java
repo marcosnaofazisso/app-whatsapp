@@ -1,9 +1,13 @@
 package com.marcosviniciusferreira.whatsapp.activity;
 
 import android.content.Intent;
+
 import androidx.annotation.NonNull;
+
 import com.google.android.material.textfield.TextInputEditText;
+
 import androidx.appcompat.app.AppCompatActivity;
+
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -14,7 +18,10 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.marcosviniciusferreira.whatsapp.R;
+import com.marcosviniciusferreira.whatsapp.config.ConfiguracaoFirebase;
 import com.marcosviniciusferreira.whatsapp.config.FirebaseConfig;
 
 public class LoginActivity extends AppCompatActivity {
@@ -55,6 +62,8 @@ public class LoginActivity extends AppCompatActivity {
 
                 if (textEmail.isEmpty() || textSenha.isEmpty()) {
                     Toast.makeText(getApplicationContext(), "Preencha todos os campos!", Toast.LENGTH_SHORT).show();
+
+
                 } else {
                     auth.signInWithEmailAndPassword(textEmail, textSenha).addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
                         @Override
