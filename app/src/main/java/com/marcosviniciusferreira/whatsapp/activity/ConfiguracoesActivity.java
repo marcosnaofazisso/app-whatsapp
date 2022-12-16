@@ -16,9 +16,20 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.marcosviniciusferreira.whatsapp.R;
+import com.marcosviniciusferreira.whatsapp.config.FirebaseConfig;
+import com.marcosviniciusferreira.whatsapp.helper.Base64Custom;
 import com.marcosviniciusferreira.whatsapp.helper.Permissao;
+import com.marcosviniciusferreira.whatsapp.helper.UsuarioFirebase;
+
+import java.io.ByteArrayOutputStream;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -28,6 +39,8 @@ public class ConfiguracoesActivity extends AppCompatActivity {
     private static final int SELECAO_CAMERA = 100;
     private static final int SELECAO_GALERIA = 200;
     private CircleImageView circleImageViewPerfil;
+    private StorageReference storageReference;
+    private String idUsuario;
 
     public String[] permissoesNecessarias = new String[]{
             Manifest.permission.READ_EXTERNAL_STORAGE,
@@ -38,6 +51,11 @@ public class ConfiguracoesActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_configuracoes);
+
+        //Vamos pegar a referência do Firebase Storage
+        storageReference = FirebaseConfig.getFirebaseStorage();
+        //Vamos pegar o ID de um usuário
+        idUsuario = UsuarioFirebase.getIdentificadorUsuario();
 
         imageButtonCamera = findViewById(R.id.imageButtonCamera);
         imageButtonGaleria = findViewById(R.id.imageButtonGaleria);
@@ -105,6 +123,31 @@ public class ConfiguracoesActivity extends AppCompatActivity {
 
                 if (imagem != null) {
                     circleImageViewPerfil.setImageBitmap(imagem);
+
+                    //Recuperar dados da imagem para o firebase
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    imagem.compress(Bitmap.CompressFormat.JPEG, 70, baos);
+                    byte[] dadosImagem = baos.toByteArray();
+
+                    //Salvar imagem no Firebase Storage
+                    StorageReference imagemRef = storageReference
+                            .child("imagens")
+                            .child("perfil")
+                            .child(idUsuario)
+                            .child("perfil.jpeg");
+
+                    UploadTask uploadTask = imagemRef.putBytes(dadosImagem);
+                    uploadTask.addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(ConfiguracoesActivity.this, "Falha ao fazer upload da imagem", Toast.LENGTH_SHORT).show();
+                        }
+                    }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            Toast.makeText(ConfiguracoesActivity.this, "Sucesso ao fazer upload da imagem", Toast.LENGTH_SHORT).show();
+                        }
+                    });
                 }
 
             } catch (Exception e) {
