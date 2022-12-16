@@ -5,6 +5,10 @@
 
     <dist:module dist:instant="true" />
 
+    //ler armazenamento externo de fotos do usuário
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CAMERA" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -12,7 +16,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activity.ConfiguracoesActivity"
+        <activity
+            android:name=".activity.ConfiguracoesActivity"
             android:parentActivityName=".activity.MainActivity">
 
         </activity>
