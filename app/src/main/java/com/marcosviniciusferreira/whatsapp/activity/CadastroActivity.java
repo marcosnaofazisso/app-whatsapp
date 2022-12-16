@@ -18,6 +18,7 @@ import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
 import com.marcosviniciusferreira.whatsapp.R;
+import com.marcosviniciusferreira.whatsapp.config.FirebaseConfig;
 import com.marcosviniciusferreira.whatsapp.helper.Base64Custom;
 import com.marcosviniciusferreira.whatsapp.model.Usuario;
 
@@ -40,7 +41,7 @@ public class CadastroActivity extends AppCompatActivity {
 
     public void cadastrarUsuario(final Usuario usuario) {
 
-        autenticacao = ConfiguracaoFirebase.getFirebaseAutenticacao();
+        autenticacao = FirebaseConfig.getFirebaseAuth();
         autenticacao.createUserWithEmailAndPassword(
                 usuario.getEmail(), usuario.getSenha()
         ).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
