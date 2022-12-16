@@ -5,6 +5,10 @@
 
     <dist:module dist:instant="true" />
 
+    <uses-feature
+        android:name="android.hardware.camera2"
+        android:required="true" />
+
     //ler armazenamento externo de fotos do usuário
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CAMERA" />
