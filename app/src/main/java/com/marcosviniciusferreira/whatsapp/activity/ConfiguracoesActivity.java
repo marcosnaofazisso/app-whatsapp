@@ -17,6 +17,7 @@ import android.provider.MediaStore;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -31,6 +32,7 @@ import com.marcosviniciusferreira.whatsapp.config.FirebaseConfig;
 import com.marcosviniciusferreira.whatsapp.helper.Base64Custom;
 import com.marcosviniciusferreira.whatsapp.helper.Permissao;
 import com.marcosviniciusferreira.whatsapp.helper.UsuarioFirebase;
+import com.marcosviniciusferreira.whatsapp.model.Usuario;
 
 import java.io.ByteArrayOutputStream;
 
@@ -44,7 +46,9 @@ public class ConfiguracoesActivity extends AppCompatActivity {
     private CircleImageView circleImageViewPerfil;
     private StorageReference storageReference;
     private EditText editNomePerfil;
+    private ImageView imageAtualizarNome;
     private String idUsuario;
+    private Usuario usuarioLogado;
 
     public String[] permissoesNecessarias = new String[]{
             Manifest.permission.READ_EXTERNAL_STORAGE,
@@ -60,11 +64,14 @@ public class ConfiguracoesActivity extends AppCompatActivity {
         imageButtonGaleria = findViewById(R.id.imageButtonGaleria);
         circleImageViewPerfil = findViewById(R.id.circleImageViewFotoPerfil);
         editNomePerfil = findViewById(R.id.editNomePerfil);
+        imageAtualizarNome = findViewById(R.id.imageAtualizarNome);
 
         //Vamos pegar a referência do Firebase Storage
         storageReference = FirebaseConfig.getFirebaseStorage();
         //Vamos pegar o ID de um usuário
         idUsuario = UsuarioFirebase.getIdentificadorUsuario();
+        //Vamos pegar todos os dados de um usuário logado
+        usuarioLogado = UsuarioFirebase.getDadosUsuarioLogado();
 
         //Recuperar dados do usuário
         FirebaseUser usuario = UsuarioFirebase.getUsuarioAtual();
@@ -116,6 +123,18 @@ public class ConfiguracoesActivity extends AppCompatActivity {
                     startActivityForResult(i, SELECAO_GALERIA);
                 }
 
+            }
+        });
+
+        imageAtualizarNome.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (UsuarioFirebase.atualizarNomeUsuario(editNomePerfil.getText().toString())) {
+
+                    usuarioLogado.setNome(editNomePerfil.getText().toString());
+                    usuarioLogado.atualizar();
+                    Toast.makeText(ConfiguracoesActivity.this, "Nome alterado com sucesso!", Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
@@ -185,7 +204,15 @@ public class ConfiguracoesActivity extends AppCompatActivity {
     }
 
     public void atualizaFotoUsuario(Uri url) {
-        UsuarioFirebase.atualizarFotoUsuario(url);
+        boolean retornoDeAtualizacao = UsuarioFirebase.atualizarFotoUsuario(url);
+        if (retornoDeAtualizacao) {
+            usuarioLogado.setFoto(url.toString());
+            usuarioLogado.atualizar();
+            Toast.makeText(ConfiguracoesActivity.this,
+                    "Sua foto foi alterada!",
+                    Toast.LENGTH_SHORT).show();
+
+        }
 
     }
 
