@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -18,6 +19,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.marcosviniciusferreira.whatsapp.R;
 import com.marcosviniciusferreira.whatsapp.adapter.ContatosAdapter;
 import com.marcosviniciusferreira.whatsapp.config.FirebaseConfig;
+import com.marcosviniciusferreira.whatsapp.helper.UsuarioFirebase;
 import com.marcosviniciusferreira.whatsapp.model.Usuario;
 
 import java.util.ArrayList;
@@ -32,6 +34,7 @@ public class ContatosFragment extends Fragment {
     private ArrayList<Usuario> listaContatos = new ArrayList<>();
     private DatabaseReference usuariosRef;
     private ValueEventListener valueEventListenerContatos;
+    private FirebaseUser usuarioAtual;
 
 
     public ContatosFragment() {
@@ -45,6 +48,8 @@ public class ContatosFragment extends Fragment {
 
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_contatos, container, false);
+        //Recuperar usuario atual
+        usuarioAtual = UsuarioFirebase.getUsuarioAtual();
 
         recyclerViewListaContatos = view.findViewById(R.id.recyclerViewListaContatos);
         //Recuperar lista de contatos
@@ -82,8 +87,15 @@ public class ContatosFragment extends Fragment {
             public void onDataChange(DataSnapshot dataSnapshot) {
 
                 for (DataSnapshot dados : dataSnapshot.getChildren()) {
+
                     Usuario usuario = dados.getValue(Usuario.class);
-                    listaContatos.add(usuario);
+
+                    String emailUsuarioAtual = usuarioAtual.getEmail();
+
+                    if (!emailUsuarioAtual.equals(usuario.getEmail())) {
+                        listaContatos.add(usuario);
+
+                    }
                 }
 
                 adapter.notifyDataSetChanged();
