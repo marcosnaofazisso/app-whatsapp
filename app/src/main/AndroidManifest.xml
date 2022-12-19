@@ -9,7 +9,6 @@
         android:name="android.hardware.camera2"
         android:required="true" />
 
-    //ler armazenamento externo de fotos do usuário
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CAMERA" />
 
@@ -21,10 +20,17 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".activity.ConfiguracoesActivity"
-            android:parentActivityName=".activity.MainActivity">
-
+            android:name=".activity.ChatActivity"
+            android:label="@string/title_activity_chat"
+            android:parentActivityName=".activity.MainActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.marcosviniciusferreira.whatsapp.activity.MainActivity" />
         </activity>
+        <activity
+            android:name=".activity.ConfiguracoesActivity"
+            android:parentActivityName=".activity.MainActivity"></activity>
         <activity android:name=".activity.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

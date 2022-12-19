@@ -1,6 +1,7 @@
 package com.marcosviniciusferreira.whatsapp.fragment;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -10,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -17,8 +19,10 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.marcosviniciusferreira.whatsapp.R;
+import com.marcosviniciusferreira.whatsapp.activity.ChatActivity;
 import com.marcosviniciusferreira.whatsapp.adapter.ContatosAdapter;
 import com.marcosviniciusferreira.whatsapp.config.FirebaseConfig;
+import com.marcosviniciusferreira.whatsapp.helper.RecyclerItemClickListener;
 import com.marcosviniciusferreira.whatsapp.helper.UsuarioFirebase;
 import com.marcosviniciusferreira.whatsapp.model.Usuario;
 
@@ -64,6 +68,35 @@ public class ContatosFragment extends Fragment {
         recyclerViewListaContatos.setLayoutManager(layoutManager);
         recyclerViewListaContatos.setHasFixedSize(true);
         recyclerViewListaContatos.setAdapter(adapter);
+
+        //Configurar evento de clique no recyclerView
+        recyclerViewListaContatos.addOnItemTouchListener(
+                new RecyclerItemClickListener(
+                        getActivity(),
+                        recyclerViewListaContatos,
+                        new RecyclerItemClickListener.OnItemClickListener() {
+                            @Override
+                            public void onItemClick(View view, int position) {
+
+                                Intent i = new Intent(getActivity(), ChatActivity.class);
+                                startActivity(i);
+
+
+                            }
+
+                            @Override
+                            public void onLongItemClick(View view, int position) {
+
+                            }
+
+                            @Override
+                            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                            }
+                        }
+                )
+        );
+
 
         return view;
 
