@@ -9,20 +9,29 @@ import com.google.android.material.snackbar.Snackbar;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.marcosviniciusferreira.whatsapp.R;
 import com.marcosviniciusferreira.whatsapp.adapter.ContatosAdapter;
+import com.marcosviniciusferreira.whatsapp.adapter.MensagensAdapter;
 import com.marcosviniciusferreira.whatsapp.config.FirebaseConfig;
 import com.marcosviniciusferreira.whatsapp.helper.Base64Custom;
 import com.marcosviniciusferreira.whatsapp.helper.UsuarioFirebase;
 import com.marcosviniciusferreira.whatsapp.model.Mensagem;
 import com.marcosviniciusferreira.whatsapp.model.Usuario;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -32,6 +41,16 @@ public class ChatActivity extends AppCompatActivity {
     private CircleImageView circleImageViewFoto;
     private EditText editMensagem;
     private Usuario usuarioDestinatario;
+
+    private RecyclerView recyclerMensagens;
+    private MensagensAdapter adapter;
+    private List<Mensagem> mensagens = new ArrayList<>();
+
+    private DatabaseReference database;
+    private DatabaseReference mensagensRef;
+
+    private ChildEventListener childEventListenerMensagens;
+
 
     //Identificado de usuarios remetente e destinatario
     private String idUsuarioRemetente;
@@ -53,6 +72,7 @@ public class ChatActivity extends AppCompatActivity {
         textViewNome = findViewById(R.id.textViewNomeChat);
         circleImageViewFoto = findViewById(R.id.circleImageFotoChat);
         editMensagem = findViewById(R.id.editMensagem);
+        recyclerMensagens = findViewById(R.id.recyclerMensagens);
 
         //Recuperar dados do usuário remetente
         idUsuarioRemetente = UsuarioFirebase.getIdentificadorUsuario();
@@ -79,6 +99,22 @@ public class ChatActivity extends AppCompatActivity {
 
 
         }
+
+        //Configuracao adapter
+        adapter = new MensagensAdapter(mensagens, getApplicationContext());
+
+        //Configuracao recyclerView
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
+        recyclerMensagens.setLayoutManager(layoutManager);
+        recyclerMensagens.setHasFixedSize(true);
+        recyclerMensagens.setAdapter(adapter);
+
+        //Recuperando instancia do database e referencia das mensagens
+        database = FirebaseConfig.getFirebaseDatabase();
+        mensagensRef = database.child("mensagens")
+                .child(idUsuarioRemetente)
+                .child(idUsuarioDestinatario);
+
     }
 
     public void enviarMensagem(View view) {
@@ -116,6 +152,52 @@ public class ChatActivity extends AppCompatActivity {
         //Limpar texto
         editMensagem.setText("");
 
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        recuperarMensagens();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        mensagensRef.removeEventListener(childEventListenerMensagens);
+    }
+
+    private void recuperarMensagens() {
+
+        childEventListenerMensagens = mensagensRef.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                Mensagem mensagem = dataSnapshot.getValue(Mensagem.class);
+                mensagens.add(mensagem);
+                adapter.notifyDataSetChanged();
+
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
 
     }
 
