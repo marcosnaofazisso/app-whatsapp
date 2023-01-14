@@ -49,7 +49,7 @@
                 android:inputType="textPersonName" />
 
             <ImageView
-                android:id="@+id/imageView"
+                android:id="@+id/imageCamera"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 app:srcCompat="@drawable/ic_camera" />
