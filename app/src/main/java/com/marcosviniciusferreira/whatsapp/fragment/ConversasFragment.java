@@ -95,7 +95,6 @@ public class ConversasFragment extends Fragment {
         );
 
 
-
         //Configurar conversas Ref
         String identificadorUsuario = UsuarioFirebase.getIdentificadorUsuario();
         database = FirebaseConfig.getFirebaseDatabase();
@@ -119,7 +118,29 @@ public class ConversasFragment extends Fragment {
     }
 
     public void pesquisarConversas(String texto) {
-        Log.d("Pesquisa: ", texto);
+
+        List<Conversa> listaConversasBusca = new ArrayList<>();
+
+        for (Conversa conversa : listaConversas) {
+
+            String nome = conversa.getUsuarioExibicao().getNome().toLowerCase();
+            String ultimaMsg = conversa.getUltimaMensagem().toLowerCase();
+            if (nome.contains(texto) || ultimaMsg.contains(texto)) {
+                listaConversasBusca.add(conversa);
+            }
+        }
+
+        adapter = new ConversasAdapter(listaConversasBusca, getActivity());
+        recylerViewConversas.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
+
+    }
+
+    public void recarregarConversas() {
+
+        adapter = new ConversasAdapter(listaConversas, getActivity());
+        recylerViewConversas.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
 
     }
 
