@@ -45,6 +45,9 @@ dependencies {
 
     implementation 'de.hdodenhof:circleimageview:2.2.0'
 
+    implementation 'com.miguelcatalan:materialsearchview:1.4.0'
+
+
     implementation 'com.firebaseui:firebase-ui-storage:0.6.0'
 
 
