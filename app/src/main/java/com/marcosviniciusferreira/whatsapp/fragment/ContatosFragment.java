@@ -20,6 +20,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.marcosviniciusferreira.whatsapp.R;
 import com.marcosviniciusferreira.whatsapp.activity.ChatActivity;
+import com.marcosviniciusferreira.whatsapp.activity.GrupoActivity;
 import com.marcosviniciusferreira.whatsapp.adapter.ContatosAdapter;
 import com.marcosviniciusferreira.whatsapp.config.FirebaseConfig;
 import com.marcosviniciusferreira.whatsapp.helper.RecyclerItemClickListener;
@@ -80,9 +81,17 @@ public class ContatosFragment extends Fragment {
 
                                 Usuario usuarioSelecionado = listaContatos.get(position);
 
-                                Intent i = new Intent(getActivity(), ChatActivity.class);
-                                i.putExtra("chatContato", usuarioSelecionado);
-                                startActivity(i);
+                                boolean cabecalho = usuarioSelecionado.getEmail().isEmpty();
+
+                                if (cabecalho) {
+                                    Intent i = new Intent(getActivity(), GrupoActivity.class);
+                                    startActivity(i);
+                                } else {
+                                    Intent i = new Intent(getActivity(), ChatActivity.class);
+                                    i.putExtra("chatContato", usuarioSelecionado);
+                                    startActivity(i);
+
+                                }
 
 
                             }
@@ -99,6 +108,12 @@ public class ContatosFragment extends Fragment {
                         }
                 )
         );
+
+        Usuario itemGrupo = new Usuario();
+        itemGrupo.setNome("Novo Grupo");
+        itemGrupo.setEmail("");
+
+        listaContatos.add(itemGrupo);
 
 
         return view;
