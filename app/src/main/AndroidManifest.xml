@@ -20,6 +20,15 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
+            android:name=".activity.CadastroGrupoActivity"
+            android:label="@string/title_activity_cadastro_grupo"
+            android:parentActivityName=".activity.GrupoActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.marcosviniciusferreira.whatsapp.activity.GrupoActivity" />
+        </activity>
+        <activity
             android:name=".activity.GrupoActivity"
             android:label="@string/title_activity_grupo"
             android:parentActivityName=".activity.MainActivity"

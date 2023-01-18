@@ -1,5 +1,6 @@
 package com.marcosviniciusferreira.whatsapp.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -26,6 +27,7 @@ import com.marcosviniciusferreira.whatsapp.helper.RecyclerItemClickListener;
 import com.marcosviniciusferreira.whatsapp.helper.UsuarioFirebase;
 import com.marcosviniciusferreira.whatsapp.model.Usuario;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,6 +42,7 @@ public class GrupoActivity extends AppCompatActivity {
     private DatabaseReference usuariosRef;
     private FirebaseUser usuarioAtual;
     private Toolbar toolbar;
+    private FloatingActionButton fabAvancarCadastro;
 
 
     @Override
@@ -49,21 +52,12 @@ public class GrupoActivity extends AppCompatActivity {
 
         toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle("Novo Grupo");
-
         setSupportActionBar(toolbar);
-
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
 
         //botao voltar ja ativado
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        fabAvancarCadastro = findViewById(R.id.fabAvancarCadastro);
 
         recyclerMembros = findViewById(R.id.recyclerMembros);
         recyclerMembrosSelecionados = findViewById(R.id.recyclerMembrosSelecionados);
@@ -166,6 +160,14 @@ public class GrupoActivity extends AppCompatActivity {
                 )
         );
 
+        fabAvancarCadastro.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(GrupoActivity.this, CadastroGrupoActivity.class);
+                intent.putExtra("membros", (Serializable) listaMembrosSelecionados);
+                startActivity(intent);
+            }
+        });
 
     }
 
