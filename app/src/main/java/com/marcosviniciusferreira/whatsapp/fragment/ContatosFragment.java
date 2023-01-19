@@ -113,16 +113,13 @@ public class ContatosFragment extends Fragment {
                 )
         );
 
-        Usuario itemGrupo = new Usuario();
-        itemGrupo.setNome("Novo Grupo");
-        itemGrupo.setEmail("");
-
-        listaContatos.add(itemGrupo);
+        adicionarMenuNovoGrupo();
 
 
         return view;
 
     }
+
 
     @Override
     public void onStart() {
@@ -140,6 +137,8 @@ public class ContatosFragment extends Fragment {
         valueEventListenerContatos = usuariosRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+
+                limparListaContatos();
 
                 for (DataSnapshot dados : dataSnapshot.getChildren()) {
 
@@ -161,6 +160,22 @@ public class ContatosFragment extends Fragment {
 
             }
         });
+    }
+
+    public void limparListaContatos() {
+
+        listaContatos.clear();
+        adicionarMenuNovoGrupo();
+
+    }
+
+    private void adicionarMenuNovoGrupo() {
+
+        Usuario itemGrupo = new Usuario();
+        itemGrupo.setNome("Novo Grupo");
+        itemGrupo.setEmail("");
+        listaContatos.add(itemGrupo);
+
     }
 
 
