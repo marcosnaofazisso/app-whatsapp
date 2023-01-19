@@ -76,8 +76,6 @@ public class ChatActivity extends AppCompatActivity {
 
     private static final int SELECAO_CAMERA = 100;
 
-    private String timeStamp;
-
 
     //Identificado de usuarios remetente e destinatario
     private String idUsuarioRemetente;
@@ -87,9 +85,6 @@ public class ChatActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
-
-        timeStamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date(System.currentTimeMillis()));
-
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle("");
@@ -229,16 +224,53 @@ public class ChatActivity extends AppCompatActivity {
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
 
                             String downloadUrl = taskSnapshot.getDownloadUrl().toString();
-                            Mensagem mensagem = new Mensagem();
-                            mensagem.setIdUsuario(idUsuarioRemetente);
-                            mensagem.setMensagem("imagem.jpeg");
-                            mensagem.setImagem(downloadUrl);
 
-                            //Salvar mensagem remetente
-                            salvarMensagem(idUsuarioRemetente, idUsuarioDestinatario, mensagem);
+                            if (usuarioDestinatario != null) {
 
-                            //Salvar mensagem destinatario
-                            salvarMensagem(idUsuarioDestinatario, idUsuarioRemetente, mensagem);
+                                Mensagem mensagem = new Mensagem();
+                                mensagem.setIdUsuario(idUsuarioRemetente);
+                                mensagem.setMensagem("imagem.jpeg");
+                                mensagem.setImagem(downloadUrl);
+
+                                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                                    OffsetTime offset = OffsetTime.now();
+                                    mensagem.setHorarioEnvio(String.valueOf(offset.getHour() - 3 + " : " + offset.getMinute()));
+                                }
+
+                                //Salvar mensagem remetente
+                                salvarMensagem(idUsuarioRemetente, idUsuarioDestinatario, mensagem);
+
+                                //Salvar mensagem destinatario
+                                salvarMensagem(idUsuarioDestinatario, idUsuarioRemetente, mensagem);
+
+                            } else {
+
+                                for (Usuario membro : grupo.getMembros()) {
+
+                                    String idRemetenteGrupo = Base64Custom.codeBase64(membro.getEmail());
+                                    String idUsuarioLogadoGrupo = UsuarioFirebase.getIdentificadorUsuario();
+
+                                    Mensagem mensagem = new Mensagem();
+                                    mensagem.setIdUsuario(idUsuarioLogadoGrupo);
+                                    mensagem.setMensagem("imagem.jpeg");
+                                    mensagem.setNome(usuarioLogadoRemetente.getNome());
+                                    mensagem.setImagem(downloadUrl);
+
+                                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                                        OffsetTime offset = OffsetTime.now();
+                                        mensagem.setHorarioEnvio(String.valueOf(offset.getHour() - 3 + " : " + offset.getMinute()));
+                                    }
+
+                                    //Salvar mensagem para o membro do grupo
+                                    salvarMensagem(idRemetenteGrupo, idUsuarioDestinatario, mensagem);
+
+                                    //Salvar conversa para o membro do grupo
+                                    salvarConversa(idRemetenteGrupo, idUsuarioDestinatario, usuarioDestinatario, mensagem, true);
+
+
+                                }
+
+                            }
 
                             Toast.makeText(ChatActivity.this,
                                     "Sucesso ao enviar imagem",
