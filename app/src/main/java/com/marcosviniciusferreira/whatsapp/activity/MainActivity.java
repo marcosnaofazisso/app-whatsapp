@@ -11,12 +11,15 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.marcosviniciusferreira.whatsapp.R;
 import com.marcosviniciusferreira.whatsapp.config.FirebaseConfig;
 import com.marcosviniciusferreira.whatsapp.fragment.ContatosFragment;
 import com.marcosviniciusferreira.whatsapp.fragment.ConversasFragment;
+import com.marcosviniciusferreira.whatsapp.helper.RecyclerItemClickListener;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
 import com.ogaclejapan.smarttablayout.SmartTabLayout;
 import com.ogaclejapan.smarttablayout.utils.v4.FragmentPagerItemAdapter;
@@ -58,6 +61,9 @@ public class MainActivity extends AppCompatActivity {
         //Configuracao do search view
         searchView = findViewById(R.id.materialSearchPrincipal);
 
+        searchView.setHint("Pesquisar");
+
+
         //Listener para o search view
         searchView.setOnSearchViewListener(new MaterialSearchView.SearchViewListener() {
             @Override
@@ -84,10 +90,34 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onQueryTextChange(String newText) {
 
-                ConversasFragment fragment = (ConversasFragment) adapter.getPage(0);
-                if (newText != null && !newText.isEmpty()) {
-                    fragment.pesquisarConversas(newText.toLowerCase());
+                //Veirifcar se esta pesquisando
+                //Conversas ou contatos
+                //a partir da tab que esta ativa
+                switch (viewPager.getCurrentItem()) {
+                    case 0:
+
+                        ConversasFragment conversasFragment = (ConversasFragment) adapter.getPage(0);
+                        if (newText != null && !newText.isEmpty()) {
+                            conversasFragment.pesquisarConversas(newText.toLowerCase());
+                        } else {
+                            conversasFragment.recarregarConversas();
+                        }
+
+                        break;
+
+                    case 1:
+
+                        ContatosFragment contatosFragment = (ContatosFragment) adapter.getPage(1);
+                        if (newText != null && !newText.isEmpty()) {
+                            contatosFragment.pesquisarContatos(newText.toLowerCase());
+                        } else {
+                            contatosFragment.recarregarContatos();
+
+                        }
+
+                        break;
                 }
+
 
                 return true;
             }

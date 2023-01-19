@@ -22,12 +22,15 @@ import com.marcosviniciusferreira.whatsapp.R;
 import com.marcosviniciusferreira.whatsapp.activity.ChatActivity;
 import com.marcosviniciusferreira.whatsapp.activity.GrupoActivity;
 import com.marcosviniciusferreira.whatsapp.adapter.ContatosAdapter;
+import com.marcosviniciusferreira.whatsapp.adapter.ConversasAdapter;
 import com.marcosviniciusferreira.whatsapp.config.FirebaseConfig;
 import com.marcosviniciusferreira.whatsapp.helper.RecyclerItemClickListener;
 import com.marcosviniciusferreira.whatsapp.helper.UsuarioFirebase;
+import com.marcosviniciusferreira.whatsapp.model.Conversa;
 import com.marcosviniciusferreira.whatsapp.model.Usuario;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -79,7 +82,8 @@ public class ContatosFragment extends Fragment {
                             @Override
                             public void onItemClick(View view, int position) {
 
-                                Usuario usuarioSelecionado = listaContatos.get(position);
+                                List<Usuario> listaUsuariosAtualizada = adapter.getContatos();
+                                Usuario usuarioSelecionado = listaUsuariosAtualizada.get(position);
 
                                 boolean cabecalho = usuarioSelecionado.getEmail().isEmpty();
 
@@ -157,6 +161,34 @@ public class ContatosFragment extends Fragment {
 
             }
         });
+    }
+
+
+    public void pesquisarContatos(String texto) {
+
+        List<Usuario> listaContatosBusca = new ArrayList<>();
+
+        for (Usuario contato : listaContatos) {
+
+            String nome = contato.getNome().toLowerCase();
+            if (nome.contains(texto)) {
+                listaContatosBusca.add(contato);
+            }
+
+        }
+
+        adapter = new ContatosAdapter(listaContatosBusca, getActivity());
+        recyclerViewListaContatos.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
+
+    }
+
+    public void recarregarContatos() {
+
+        adapter = new ContatosAdapter(listaContatos, getActivity());
+        recyclerViewListaContatos.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
+
     }
 
 }

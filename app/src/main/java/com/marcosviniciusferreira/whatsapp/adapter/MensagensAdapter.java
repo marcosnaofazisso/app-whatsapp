@@ -16,8 +16,6 @@ import com.marcosviniciusferreira.whatsapp.R;
 import com.marcosviniciusferreira.whatsapp.helper.UsuarioFirebase;
 import com.marcosviniciusferreira.whatsapp.model.Mensagem;
 
-import org.w3c.dom.Text;
-
 import java.util.List;
 
 public class MensagensAdapter extends RecyclerView.Adapter<MensagensAdapter.MyViewHolder> {
@@ -64,15 +62,34 @@ public class MensagensAdapter extends RecyclerView.Adapter<MensagensAdapter.MyVi
 
         String msg = mensagem.getMensagem();
         String imagem = mensagem.getImagem();
+        String horarioEnvio = mensagem.getHorarioEnvio();
+
+        holder.horarioEnvio.setText(horarioEnvio);
 
         if (imagem != null) {
             Uri url = Uri.parse(imagem);
             Glide.with(context).load(url).into(holder.imagem);
 
+            String nome = mensagem.getNome();
+            if (!nome.isEmpty()) {
+                holder.nome.setText(nome);
+            } else {
+                holder.nome.setVisibility(View.GONE);
+            }
+
             //Esconder o texto
             holder.mensagem.setVisibility(View.GONE);
 
         } else {
+
+            String nome = mensagem.getNome();
+            if (!nome.isEmpty()) {
+                holder.nome.setText(nome);
+
+            } else {
+                holder.nome.setVisibility(View.GONE);
+            }
+
             holder.mensagem.setText(msg);
             holder.imagem.setVisibility(View.GONE);
 
@@ -102,6 +119,8 @@ public class MensagensAdapter extends RecyclerView.Adapter<MensagensAdapter.MyVi
     public class MyViewHolder extends RecyclerView.ViewHolder {
 
         TextView mensagem;
+        TextView nome;
+        TextView horarioEnvio;
         ImageView imagem;
 
         public MyViewHolder(View itemView) {
@@ -109,6 +128,8 @@ public class MensagensAdapter extends RecyclerView.Adapter<MensagensAdapter.MyVi
 
             mensagem = itemView.findViewById(R.id.textMensagemTexto);
             imagem = itemView.findViewById(R.id.imageMensagemFoto);
+            nome = itemView.findViewById(R.id.textNomeExibicao);
+            horarioEnvio = itemView.findViewById(R.id.textHorarioEnvio);
         }
     }
 }

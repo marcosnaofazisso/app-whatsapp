@@ -44,7 +44,10 @@ import com.marcosviniciusferreira.whatsapp.model.Mensagem;
 import com.marcosviniciusferreira.whatsapp.model.Usuario;
 
 import java.io.ByteArrayOutputStream;
+import java.text.SimpleDateFormat;
+import java.time.OffsetTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -56,8 +59,10 @@ public class ChatActivity extends AppCompatActivity {
     private CircleImageView circleImageViewFoto;
     private EditText editMensagem;
     private Usuario usuarioDestinatario;
+    private Usuario usuarioLogadoRemetente;
     private Grupo grupo;
     private ImageView imageCamera;
+    private TextView textHorarioEnvio;
 
     private RecyclerView recyclerMensagens;
     private MensagensAdapter adapter;
@@ -71,6 +76,8 @@ public class ChatActivity extends AppCompatActivity {
 
     private static final int SELECAO_CAMERA = 100;
 
+    private String timeStamp;
+
 
     //Identificado de usuarios remetente e destinatario
     private String idUsuarioRemetente;
@@ -80,6 +87,8 @@ public class ChatActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
+
+        timeStamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date(System.currentTimeMillis()));
 
 
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -94,9 +103,11 @@ public class ChatActivity extends AppCompatActivity {
         editMensagem = findViewById(R.id.editMensagem);
         recyclerMensagens = findViewById(R.id.recyclerMensagens);
         imageCamera = findViewById(R.id.imageCamera);
+        textHorarioEnvio = findViewById(R.id.textHorarioEnvio);
 
         //Recuperar dados do usuário remetente
         idUsuarioRemetente = UsuarioFirebase.getIdentificadorUsuario();
+        usuarioLogadoRemetente = UsuarioFirebase.getDadosUsuarioLogado();
 
 
         //Recuperar dados do usuário destinatario
@@ -258,14 +269,22 @@ public class ChatActivity extends AppCompatActivity {
                 mensagem.setIdUsuario(idUsuarioRemetente);
                 mensagem.setMensagem(textoMensagem);
 
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                    OffsetTime offset = OffsetTime.now();
+                    mensagem.setHorarioEnvio(String.valueOf(offset.getHour() - 3 + " : " + offset.getMinute()));
+                }
+
                 //Salvar mensagem para o remetente
                 salvarMensagem(idUsuarioRemetente, idUsuarioDestinatario, mensagem);
 
                 //Salvar mensagem para o destinatario
                 salvarMensagem(idUsuarioDestinatario, idUsuarioRemetente, mensagem);
 
-                //Salvar conversa
-                salvarConversa(mensagem, false);
+                //Salvar conversa para o remetente
+                salvarConversa(idUsuarioRemetente, idUsuarioDestinatario, usuarioDestinatario, mensagem, false);
+
+                //Salvar conversa para o destinatario
+                salvarConversa(idUsuarioDestinatario, idUsuarioRemetente, usuarioLogadoRemetente, mensagem, false);
 
             } else {
 
@@ -277,12 +296,18 @@ public class ChatActivity extends AppCompatActivity {
                     Mensagem mensagem = new Mensagem();
                     mensagem.setIdUsuario(idUsuarioLogadoGrupo);
                     mensagem.setMensagem(textoMensagem);
+                    mensagem.setNome(usuarioLogadoRemetente.getNome());
+
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                        OffsetTime offset = OffsetTime.now();
+                        mensagem.setHorarioEnvio(String.valueOf(offset.getHour() - 3 + " : " + offset.getMinute()));
+                    }
 
                     //Salvar mensagem para o membro do grupo
                     salvarMensagem(idRemetenteGrupo, idUsuarioDestinatario, mensagem);
 
                     //Salvar conversa para o membro do grupo
-                    salvarConversa(mensagem, true);
+                    salvarConversa(idRemetenteGrupo, idUsuarioDestinatario, usuarioDestinatario, mensagem, true);
 
 
                 }
@@ -299,11 +324,11 @@ public class ChatActivity extends AppCompatActivity {
 
     }
 
-    private void salvarConversa(Mensagem msg, boolean isGrupo) {
+    private void salvarConversa(String idRemetente, String idDestinatario, Usuario usuarioExibicao, Mensagem msg, boolean isGrupo) {
 
         Conversa conversaRemetente = new Conversa();
-        conversaRemetente.setIdRemetente(idUsuarioRemetente);
-        conversaRemetente.setIdDestinatario(idUsuarioDestinatario);
+        conversaRemetente.setIdRemetente(idRemetente);
+        conversaRemetente.setIdDestinatario(idDestinatario);
         conversaRemetente.setUltimaMensagem(msg.getMensagem());
 
         if (isGrupo) {
@@ -311,7 +336,7 @@ public class ChatActivity extends AppCompatActivity {
             conversaRemetente.setGrupo(grupo);
 
         } else {
-            conversaRemetente.setUsuarioExibicao(usuarioDestinatario);
+            conversaRemetente.setUsuarioExibicao(usuarioExibicao);
             conversaRemetente.setIsGrupo("false");
 
         }
