@@ -13,17 +13,24 @@ Additionally, the project aim to replicate the user interface of WhatsApp, as we
 # Demo
 https://user-images.githubusercontent.com/79977399/213778913-4212fcd5-5f73-4536-8f21-01e96770db47.mp4
 
-
-
 Images of some of the functionalities like sending and receiving messages from users, group chats with 2 or more integrants, chat with possibility of sending pictures of gallery or camera.
 
 # Tutorial
-Recommended settings version: 
-Android Studio: 3.5
+Recommended build tools and SDK versions: 
+<br>
+<br>
+Android Studio IDE: 3.5
+<br>
 Android 8.0 / 9.0
+<br>
 Compile 26
+<br>
 Min SDK 15
+<br>
 Max Android SDK Build-Tools 28 (API 9)
+<br>
+
+Dependencies:
 
 
     implementation 'androidx.appcompat:appcompat:1.0.0'
