@@ -1,5 +1,5 @@
 # WhatsApp Clone
-
+<img src="./demo/whatsapp-clone.jpg" height="500" width="900">
 A basic WhatsApp Clone project, integrated with Firebase Auth, Realtime Database and Storage.
 
 ### Developers: 
@@ -11,7 +11,9 @@ The main goals of a WhatsApp Clone project on Android development was to study h
 Additionally, the project aim to replicate the user interface of WhatsApp, as well as its user experience, in order to make the app feel familiar to users. 
 
 # Demo
-<img src="./demo/whatsapp-clone.jpg" height="400" width="800">
+https://user-images.githubusercontent.com/79977399/213778913-4212fcd5-5f73-4536-8f21-01e96770db47.mp4
+
+
 
 Images of some of the functionalities like sending and receiving messages from users, group chats with 2 or more integrants, chat with possibility of sending pictures of gallery or camera.
 
